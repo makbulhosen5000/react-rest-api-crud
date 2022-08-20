@@ -1,23 +1,42 @@
-import logo from './logo.svg';
+
 import './App.css';
+import React, { useEffect, useState } from 'react';
+
+const URL = " https://rest-api-without-db.herokuapp.com/users";
 
 function App() {
+     const [users,setUsers] = useState(null);
+     const [isLoading,setIsLoading] = useState(true);
+     const [error,setError] = useState(null);
+    
+
+    const getAllUsers= () =>{
+      fetch(URL)
+      .then((res)=>{
+       if(!res.ok){
+        throw Error("Could Not Fetch");
+       }else{
+        return res.json()
+       }
+      })
+      .then((data)=>{
+        setUsers(data.users);
+      })
+      .catch((err)=>{
+        setError(err.message)
+      })
+      .finally(()=>{
+        setError(false);
+      })
+    }
+
+     useEffect(()=>{
+      getAllUsers();
+     }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+            app
     </div>
   );
 }
