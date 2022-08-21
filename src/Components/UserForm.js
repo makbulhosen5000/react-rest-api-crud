@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 
 function UserForm({handleSubmitData,selectedUser,btnText}) {
     const [user,setUsername] = useState({username:'',email:''});
