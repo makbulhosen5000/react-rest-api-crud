@@ -9,6 +9,11 @@ function App() {
      const [users,setUsers] = useState(null);
      const [isLoading,setIsLoading] = useState(true);
      const [error,setError] = useState(null);
+
+     //update
+     const [selectedUser,setSelectedUser] = useState({username:'',email:''});
+     const [updateFlag,setUpdateFlag] = useState(false);
+     const [selectedUserId,setSelectedUserId] = useState("");
     
 
     const getAllUsers= () =>{
@@ -57,6 +62,17 @@ function App() {
       setError(false);
     })
   }
+
+  //user edit
+  const handleEdit=(id)=>{
+       setUpdateFlag(true);
+       setSelectedUserId(id);
+       const filterData = users.filter((user)=>user.id === id )
+       setSelectedUser({username:filterData[0].username,email:filterData[0].email})
+  }
+
+
+  //add user
   const addUser=(user)=>{
     fetch(URL, {method:'POST',
     headers:{
@@ -80,13 +96,38 @@ function App() {
       setError(err.message)
     })
   } 
+  const handleUpdate=(user)=>{
+    fetch(URL+ `/${selectedUserId}`, {method:'PUT',
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify(user)
+  })
+    .then((res)=>{
+     if(!res.ok){
+      throw new Error("failed to update");
+     }
+     getAllUsers();
+     setUpdateFlag(false);
+    })
+    .then((data)=>{
+      setUsers(data.users);
+      setIsLoading(false);
+    })
+    .catch((err)=>{
+      setError(err.message)
+    })
+  }
   return (
     <div className="App">
             <h1> User Management App </h1>
             {isLoading && <h2>Loading....</h2>}
             {error &&  <h2>Error</h2>}
              
-             <UserForm btnText="Add User" handleSubmitData={addUser} />
+           {updateFlag ? (<UserForm btnText="Update User" selectedUser={selectedUser} handleSubmitData={handleUpdate} />
+           ):( 
+           <UserForm btnText="Add User" handleSubmitData={addUser} />
+           )}
 
            <section>
            {users && users.map((user)=>{
@@ -95,7 +136,7 @@ function App() {
                 <article key={id} className="card">
                   <p>{username}</p>
                   <p>{email}</p>
-                  <button className='btn'>Add</button>
+                  <button className='btn'onClick={()=>{handleEdit(id)}}>Edit</button>
                   <button className='btn' onClick={()=>{handleDelete(id)}}>Delete</button>
                 </article>
               )

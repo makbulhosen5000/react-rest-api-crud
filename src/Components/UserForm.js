@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
-function UserForm({handleSubmitData,btnText}) {
+function UserForm({handleSubmitData,selectedUser,btnText}) {
     const [user,setUsername] = useState({username:'',email:''});
     const {username,email} = user;
+
+    useEffect(()=>{
+       setUsername({username:selectedUser.username,email:selectedUser.email})
+    }, [selectedUser]);
 
     const handleChangeName=(e)=>{
         const selectedField = e.target.name;
@@ -33,6 +37,11 @@ function UserForm({handleSubmitData,btnText}) {
   )
 }
 
-UserForm.propTypes = {}
+UserForm.defaultProps = {
+  selectedUser:{
+    username:'',
+    email:''
+  }
+}
 
 export default UserForm
